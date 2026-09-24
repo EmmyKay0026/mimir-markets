@@ -29,6 +29,7 @@ See `docs/STELLAR_NETWORK.md` for the one-page architecture reference.
 | `agents/oracle/index.ts` | Off-chain AI oracle agent (LLM + local keypair) |
 | `agents/market-creator/index.ts` | Autonomous market creator (LLM + local keypair) |
 | `agents/council/` | Ten AI personas that stake as economic actors |
+| `fixtures/ledger/` | Versioned public-chain captures for deterministic offline replay |
 | `deploy/deploy.ts` | Soroban build/deploy/initialize script |
 | `scripts/stellar-keys.ts` | Keypairs + Friendbot funding + USDC trustline |
 | `scripts/create-agent-wallets.ts` | Generate 12 keypairs (oracle + creator + 10 personas) |
@@ -79,6 +80,8 @@ See `docs/STELLAR_NETWORK.md` for the one-page architecture reference.
 - When a contract in `contracts-soroban/` changes, regenerate bindings
   (`npm run stellar:bindings`) and keep `lib/contract.ts` in sync.
 - Categories: `sports`, `weather`, `crypto`, `culture`, `custom` (English).
+- Sync/read-index changes must pass `npm run check:ledger-fixture`; see
+  `docs/LEDGER_REPLAY.md` for artifact, secret, release, and rollback policy.
 
 ## Oracle agent
 

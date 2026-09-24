@@ -38,6 +38,14 @@ The agents that run Mimir each sign with their own locally held Stellar seed, pr
 
 ---
 
+## Read-index ledger replay
+
+Run `npm run check:ledger-fixture` to replay the funded-market fixture without
+a database, RPC endpoint, wallet seed, or production secret. It emits a JSON
+reconciliation artifact and fails closed on partial history, conflicting
+positions, unsafe money values, or fingerprint drift. Release and rollback
+guidance is in [`docs/LEDGER_REPLAY.md`](docs/LEDGER_REPLAY.md).
+
 ## Table of contents
 
 - [What it does](#what-it-does)
