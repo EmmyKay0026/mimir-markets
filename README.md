@@ -1123,3 +1123,4 @@ Mimir is source-available. You can use, study, modify, and share it freely.
 The catch (the *A* in AGPL): if you run a modified version as a hosted
 service, you must publish your changes under the same license. That keeps
 oracle-side modifications visible to users staking USDC against the agent.
+- **Malformed evidence fails closed.** A supplied `evidence_hash` must be exactly 32 bytes (64 hexadecimal characters, with an optional `0x` prefix) or the client rejects it before signing and submission. Omission keeps the existing zero-hash sentinel for compatible callers, while the Soroban ABI independently enforces `BytesN<32>`. This is a client validation-only rollout: it changes no storage, fees, escrow, payouts, permissions, or secrets; requires no migration or redeployment; and can be rolled back with the client change alone.
