@@ -205,6 +205,23 @@ pub struct PayoutQuote {
     pub claimed: bool,
 }
 
+/// A paginated window into a claim's challenger roster.
+///
+/// `items` holds up to `limit` entries starting at `offset`.  
+/// `total` is the total roster length so callers can tell when they have read
+/// the last page without fetching an extra empty one.
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct ChallengerPage {
+    /// The slice of challengers for this page.
+    pub items: soroban_sdk::Vec<Challenger>,
+    /// Roster position of the first item returned (mirrors the caller's
+    /// `offset` argument for safe cursor book-keeping).
+    pub offset: u32,
+    /// Total number of challengers in this claim (not just this page).
+    pub total: u32,
+}
+
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PlatformStats {
@@ -257,4 +274,13 @@ pub enum Error {
     AlreadyClaimedPayout = 34,
     ChallengersDidNotWin = 35,
     UnsupportedDecimals = 36,
+    InvalidConfidence = 37,
+    /// `cancel_claim` refused because the claim still holds counterparty funds
+    /// or a reserved creator liability: challengers have funded this market, so
+    /// it belongs to settlement, not to a creator refund.
+    ClaimHasActiveClaims = 38,
+    /// Escrow could not back the cancellation refund at the moment of the call.
+    /// The refund is never minted; the claim stays untouched and the creator
+    /// can retry once the contract is solvent again.
+    RefundNotEscrowed = 39,
 }

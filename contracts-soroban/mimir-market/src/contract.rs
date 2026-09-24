@@ -9,8 +9,8 @@ use crate::escrow;
 use crate::resolve;
 use crate::storage;
 use crate::types::{
-    Challenger, Claim, ClaimFeeView, CreateParams, Error, FeePolicy, MarketConfig, PayoutQuote,
-    PendingFeePolicy, PlatformStats, WinnerSide,
+    Challenger, ChallengerPage, Claim, ClaimFeeView, CreateParams, Error, FeePolicy, MarketConfig,
+    PayoutQuote, PendingFeePolicy, PlatformStats, WinnerSide,
 };
 
 #[contract]
@@ -99,6 +99,11 @@ impl MimirMarket {
         resolve::resolve_claim(&env, claim_id, winner_side, summary, confidence, evidence_hash)
     }
 
+    
+    pub fn transition_deadline(env: Env, claim_id: u64) -> Result<(), Error> {
+        claims::transition_deadline(&env, claim_id)
+    }
+
     pub fn cancel_claim(env: Env, claim_id: u64) -> Result<(), Error> {
         claims::cancel_claim(&env, claim_id)
     }
@@ -155,6 +160,27 @@ impl MimirMarket {
     /// already pulled their settlement.
     pub fn get_challenger_list(env: Env, claim_id: u64) -> Vec<Challenger> {
         storage::challengers(&env, claim_id)
+    }
+
+    /// A paginated window into the challenger roster.
+    ///
+    /// Returns up to `limit` entries starting at `offset` (0-based).  
+    /// `limit = 0` returns all entries from `offset` to the end of the roster —
+    /// identical to `get_challenger_list` when `offset = 0`.
+    ///
+    /// The `ChallengerPage` response always carries `total` (full roster length)
+    /// so callers can detect the last page without issuing an extra empty fetch.
+    ///
+    /// Neither `offset` nor `limit` can cause a panic: an `offset` beyond the
+    /// end of the roster returns an empty `items` slice with `total` set
+    /// correctly.
+    pub fn get_challengers_page(
+        env: Env,
+        claim_id: u64,
+        offset: u32,
+        limit: u32,
+    ) -> ChallengerPage {
+        storage::challengers_page(&env, claim_id, offset, limit)
     }
 
     /// What `claim_challenger_payout` would pay this challenger right now.
